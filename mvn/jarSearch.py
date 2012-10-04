@@ -16,15 +16,31 @@ def hashfile(filepath):
     return sha1.hexdigest()
 
 def request( hash ):
-	url = 'http://search.maven.org/solrsearch/select?q=1:"'+hash+'"&wt=json&rows=20'
-	response = urllib2.urlopen(url).read()
- 	return json.loads(response);
+    url = 'http://search.maven.org/solrsearch/select?q=1:"'+hash+'"&wt=json&rows=20'
+    response = urllib2.urlopen(url).read()
+    return json.loads(response);
+
+
+# Example: http://search.maven.org/remotecontent?filepath=commons-io/commons-io/2.4/commons-io-2.4.pom
+def getAllPaths( doc ):
+    prefix='http://search.maven.org/remotecontent?filepath=';
+    group=doc["g"]
+    groupPath=group.replace(".","/")
+    name=doc["a"]
+    version=doc["v"]
+    fullPrefix = prefix + groupPath + "/" +  name + "/" + version + "/" + name + "-" + version
+    result=[]
+    for ec in doc["ec"]:
+        result.append( fullPrefix + ec )
+    return result 
+
 
 filename = sys.argv[1]
 sha1=hashfile( sys.argv[1] )
 print sha1 + ' ' + filename
 obj = request( sha1 )
 print obj["response"]["numFound"]
-
+for path in getAllPaths( obj["response"]["docs"][0] ):
+    print "\t" +  path;
 #str=json.dumps(obj, indent=4)
 #print str;
