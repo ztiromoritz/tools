@@ -42,5 +42,4 @@ obj = request( sha1 )
 print obj["response"]["numFound"]
 for path in getAllPaths( obj["response"]["docs"][0] ):
     print "\t" +  path;
-#str=json.dumps(obj, indent=4)
-#print str;
+#print json.dumps(obj, indent=4)
